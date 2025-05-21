@@ -84,7 +84,7 @@ class Menu : Form{
         TabIndex = 2, 
         Location = new Point(200, 100), 
         AutoSize = true, 
-        Enabled = false, 
+        Enabled = true, 
     };
 
     Button reset = new Button(){
@@ -136,6 +136,8 @@ class Menu : Form{
         reset.MouseHover += new EventHandler(H_reset);
         output.Click += new EventHandler(F_output);
         output.MouseHover += new EventHandler(H_output);
+        edit.Click += new EventHandler(F_edit);
+        edit.MouseHover += new EventHandler(H_edit);
         config.Click += new EventHandler(F_config);
         config.MouseHover += new EventHandler(H_config);
         exit.Click += new EventHandler(F_exit);
@@ -169,6 +171,17 @@ class Menu : Form{
 
     private void H_output(object sender, EventArgs e){
         this.tips.Text = "outputメニューを開きます。自己管理シートに記録されたデータから、特定の項目だけを選んで抽出できます。";
+    }
+
+    private void F_edit(object sender, EventArgs e)
+    {
+        Edit edit = new Edit();
+        edit.Show();
+    }
+
+    private void H_edit(object sender, EventArgs e)
+    {
+        this.tips.Text = "editメニューを開きます。自己管理シートに記録されたデータを選択し、内容を編集できます。";
     }
     
     private void F_config(object sender, EventArgs e){
@@ -786,6 +799,348 @@ class Edit : Form{
         Location = new Point(50, 25),
         AutoSize = true,
     };
+
+    ComboBox d_list = new ComboBox()
+    {
+        TabIndex = 1,
+        Location = new Point(50, 50),
+        AutoSize = true,
+    };
+
+    Button edit = new Button()
+    {
+        Text = "edit",
+        TabIndex = 2,
+        Location = new Point(150, 100),
+        AutoSize = true,
+    };
+
+    Label l_slept_start = new Label()
+    {
+        Text = "就寝",
+        Location = new Point(50, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    DateTimePicker slept_start = new DateTimePicker()
+    {
+        Location = new Point(50, 175),
+        AutoSize = true,
+        MinDate = new DateTime(2000, 1, 1),
+        MaxDate = DateTime.Today,
+        CustomFormat = "HH:mm",
+        Visible = false,
+    };
+
+    Label l_slept_end = new Label()
+    {
+        Text = "起床",
+        Location = new Point(100, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    DateTimePicker slept_end = new DateTimePicker()
+    {
+        Location = new Point(100, 175),
+        AutoSize = true,
+        MinDate = new DateTime(2000, 1, 1),
+        MaxDate = DateTime.Today,
+        CustomFormat = "HH:mm",
+        Visible = false,
+    };
+
+    Label l_pill1 = new Label()
+    {
+        Text = "",
+        Location = new Point(150, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    DateTimePicker pill1 = new DateTimePicker()
+    {
+        Location = new Point(150, 175),
+        AutoSize = true,
+        MinDate = new DateTime(2000, 1, 1),
+        MaxDate = DateTime.Now,
+        CustomFormat = "HH:mm",
+        Visible = false,
+    };
+
+    Label l_pill2 = new Label()
+    {
+        Text = "",
+        Location = new Point(200, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    DateTimePicker pill2 = new DateTimePicker()
+    {
+        Location = new Point(200, 175),
+        AutoSize = true,
+        MinDate = new DateTime(2000, 1, 1),
+        MaxDate = DateTime.Now,
+        CustomFormat = "HH:mm",
+        Visible = false,
+    };
+
+    Label l_pill3 = new Label()
+    {
+        Text = "",
+        Location = new Point(250, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    DateTimePicker pill3 = new DateTimePicker()
+    {
+        Location = new Point(250, 175),
+        AutoSize = true,
+        MinDate = new DateTime(2000, 1, 1),
+        MaxDate = DateTime.Now,
+        CustomFormat = "HH:mm",
+        Visible = false,
+    };
+
+    Label l_training = new Label()
+    {
+        Text = "運動時間",
+        Location = new Point(300, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    ComboBox training = new ComboBox()
+    {
+        Location = new Point(300, 175),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    CheckBox sleepy = new CheckBox()
+    {
+        Text = "眠気",
+        Location = new Point(360, 165),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    CheckBox panic = new CheckBox()
+    {
+        Text = "不安感・焦燥感",
+        Location = new Point(420, 165),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    Label l_feels = new Label()
+    {
+        Text = "気分",
+        Location = new Point(500, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    ComboBox feels = new ComboBox()
+    {
+        Items = { "悪い", "普通", "良い" },
+        Location = new Point(500, 175),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    Button submit = new Button()
+    {
+        Text = "submit",
+        TabIndex = 3,
+        Visible = false,
+        Enabled = false
+    };
+
+    Button exit = new Button()
+    {
+        Text = "exit",
+        TabIndex = 4,
+        Location = new Point(150, 250),
+        AutoSize = true,
+    };
+
+    public Edit()
+    {
+        this.Width = 700;
+        this.Height = 300;
+        this.Controls.Add(label);
+        this.Controls.Add(d_list);
+        this.Controls.Add(edit);
+        this.Controls.Add(l_slept_start);
+        this.Controls.Add(slept_start);
+        this.Controls.Add(l_slept_end);
+        this.Controls.Add(slept_end);
+        this.Controls.Add(l_pill1);
+        this.Controls.Add(pill1);
+        this.Controls.Add(l_pill2);
+        this.Controls.Add(pill2);
+        this.Controls.Add(l_pill3);
+        this.Controls.Add(pill3);
+        this.Controls.Add(l_training);
+        this.Controls.Add(training);
+        this.Controls.Add(submit);
+        this.Controls.Add(exit);
+
+        StreamReader current = new StreamReader(@"自己管理シート.csv", Encoding.GetEncoding("UTF-8"));
+        List<string> lines = new List<string>();
+        while (!current.EndOfStream)
+        {
+            lines.Add(current.ReadLine());
+        }
+        int seq = 0;
+        foreach(var val in lines)
+        {
+            string[] sp = val.Split(',');
+            string data = seq.ToString() + ',' + sp[0] + ',' + sp[2];
+            d_list.Items.Add(data);
+            seq++;
+        }
+        d_list.SelectedIndex = 0;
+
+        for(int i = 0; i <= 60; i++)
+        {
+            training.Items.Add(i);
+        }
+        training.SelectedIndex = 0;
+
+        edit.Click += new EventHandler(F_edit);
+        submit.Click += new EventHandler(F_submit);
+        exit.Click += new EventHandler(F_exit);
+        current.Close();
+    }
+
+    private void F_edit(object sender, EventArgs e)
+    {
+        int num = d_list.SelectedIndex;
+        StreamReader file = new StreamReader(@"自己管理シート.csv", Encoding.GetEncoding("utf-8"));
+        List<string> lines = new List<string>();
+        while (!file.EndOfStream)
+        {
+            lines.Add(file.ReadLine());
+        }
+        l_slept_start.Visible = true;
+        l_slept_end.Visible = true;
+        l_pill1.Visible = true;
+        l_pill2.Visible = true;
+        l_pill3.Visible = true;
+        l_training.Visible = true;
+        l_feels.Visible = true;
+        slept_start.Visible = true;
+        slept_end.Visible = true;
+        pill1.Visible = true;
+        pill2.Visible = true;
+        pill3.Visible = true;
+        training.Visible = true;
+        sleepy.Visible = true;
+        panic.Visible = true;
+        feels.Visible = true;
+        submit.Visible = true;
+
+        sleepy.Enabled = true;
+        panic.Enabled = true;
+        feels.Enabled = true;
+        submit.Enabled = true;
+
+        string[] target_data = lines[num].Split(',');
+        slept_start.Value = DateTime.Parse(target_data[3]);
+        slept_end.Value = DateTime.Parse(target_data[4]);
+        pill1.Value = DateTime.Parse(target_data[6]);
+        pill2.Value = DateTime.Parse(target_data[7]);
+        pill3.Value = DateTime.Parse(target_data[8]);
+        training.ValueMember = target_data[9];
+        if (target_data[10] == "1")
+        {
+            sleepy.Checked = true;
+        }
+        else
+        {
+            sleepy.Checked = false;
+        }
+        if (target_data[11] == "1")
+        {
+            panic.Checked = true;
+        }
+        else
+        {
+            panic.Checked = false;
+        }
+        feels.ValueMember = target_data[12];
+        file.Close();
+    }
+
+    private void F_submit(object sender, EventArgs e)
+    {
+        int num = d_list.SelectedIndex;
+        StreamReader file = new StreamReader(@"自己管理シート.csv", Encoding.GetEncoding("utf-8"));
+        List<string> lines = new List<string>();
+        while(!file.EndOfStream)
+        {
+            lines.Add(file.ReadLine());
+        }
+
+        int seq = 0;
+        string output = "";
+        foreach(var val in lines)
+        {
+            if(num == seq)
+            {
+                string[] data = val.Split(',');
+                data[3] = slept_start.Value.ToString();
+                data[4] = slept_end.Value.ToString();
+                data[5] = (slept_end.Value - slept_start.Value).ToString();
+                data[6] = pill1.Value.ToString();
+                data[7] = pill2.Value.ToString();
+                data[8] = pill3.Value.ToString();
+                data[9] = training.ToString();
+                if(sleepy.Checked)
+                {
+                    data[10] = "1";
+                }
+                else
+                {
+                    data[10] = "0";
+                }
+                if (panic.Checked)
+                {
+                    data[11] = "1";
+                }
+                else
+                {
+                    data[11] = "0";
+                }
+                    data[12] = feels.ToString();
+                foreach(var val2 in data)
+                {
+                    output = output + val2.ToString() + ",";
+                }
+                output.Remove(output.Length - 1, 1);
+                output = output + "\n";
+            }
+            else
+            {
+                output = output + val + "\n";
+            }
+        }
+        file.Close();
+        StreamWriter o_file = new StreamWriter(@"自己管理シート.csv", true, Encoding.GetEncoding("utf-8"));
+        o_file.Write(output);
+        o_file.Close();
+        MessageBox.Show("変更が完了しました。", "result", MessageBoxButtons.OK);
+    }
+
+    private void F_exit(object sender, EventArgs e)
+    {
+        this.Close();
+    }
 }
 
 //服薬情報設定画面
