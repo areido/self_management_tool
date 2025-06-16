@@ -10,6 +10,9 @@ function:
     output:
         推移の確認を行う際に押す。
         出力は日付順にソートしておく。（入力順に含める？）
+    edit:
+        ver3.0にて実装
+        各打刻時データの修正を行いたい場合に押す。
     exit:
         プログラムを閉じる。
 
@@ -21,6 +24,7 @@ property:
             ・服薬時刻
             ・運動時間
             ver2.0:上記入力項目をカスタマイズ可能な状態にアップデート
+            ver3.0:時刻入力の形式を変更
     output:
         Menuからボタンで遷移
         表示項目の指定を可能とする
@@ -31,8 +35,6 @@ property:
 other:
     ・グラフ化したい
         今のところは、Excelで開いてグラフ化が最適解
-    ・ver3.0予定
-        表示項目のUI上からの追加・削除を検討
 
 制作者:
     Kenya.Yamashita(mail: melt39miku@gmail.com)
@@ -42,6 +44,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Data;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
@@ -212,50 +215,97 @@ class Input : Form{
         AutoSize = true, 
     };
 
-    TextBox slept_start = new TextBox(){
+    Label l_slept_start = new Label(){
         Text = "就寝",
-        TabIndex = 1, 
-        Location = new Point(50, 50), 
-        AutoSize = true, 
-        Enabled = true, 
+        TabIndex = 99,
+        Location = new Point(50,50),
+        AutoSize = true,
     };
 
-    TextBox slept_end = new TextBox(){
+    DateTimePicker slept_start = new DateTimePicker(){
+        Format = DateTimePickerFormat.Custom,
+        CustomFormat = "HH:mm",
+        TabIndex = 1,
+        Location = new Point(50, 75), 
+        Width = 100,
+        ShowUpDown = true,
+    };
+
+    Label l_slept_end = new Label(){
         Text = "起床",
-        TabIndex = 2, 
+        TabIndex = 99, 
         Location = new Point(150, 50), 
-        AutoSize = true, 
-        Enabled = true, 
+        AutoSize = true,  
     };
 
-    TextBox pill1 = new TextBox(){
+    DateTimePicker slept_end = new DateTimePicker(){
+        Format = DateTimePickerFormat.Custom,
+        CustomFormat = "HH:mm",
+        TabIndex = 2,
+        Location = new Point(150, 75),
+        Width = 100,
+        ShowUpDown = true,
+    };
+
+    Label l_pill1 = new Label(){
         Text = "",
+        TabIndex = 99,
+        Location = new Point(250, 50),
+        AutoSize = true,
+    };
+
+    DateTimePicker pill1 = new DateTimePicker(){
+        Format = DateTimePickerFormat.Custom,
+        CustomFormat = "HH:mm",
         TabIndex = 3, 
-        Location = new Point(250, 50), 
-        AutoSize = true, 
-        Enabled = true, 
+        Location = new Point(250, 75), 
+        Width = 100,
+        ShowUpDown = true, 
     };
 
-    TextBox pill2 = new TextBox(){
+    Label l_pill2 = new Label(){
         Text = "",
+        TabIndex = 99,
+        Location = new Point(350, 50),
+        AutoSize = true,
+    };
+
+    DateTimePicker pill2 = new DateTimePicker(){
+        Format = DateTimePickerFormat.Custom,
+        CustomFormat = "HH:mm",
         TabIndex = 4, 
-        Location = new Point(350, 50), 
-        AutoSize = true, 
-        Enabled = true, 
+        Location = new Point(350, 75), 
+        Width = 100,
+        ShowUpDown = true,
     };
 
-    TextBox pill3 = new TextBox(){
+    Label l_pill3 = new Label(){
         Text = "",
+        TabIndex = 99,
+        Location = new Point(450, 50),
+        AutoSize = true,
+    };
+
+    DateTimePicker pill3 = new DateTimePicker(){
+        Format = DateTimePickerFormat.Custom,
+        CustomFormat = "HH:mm",
         TabIndex = 5, 
-        Location = new Point(450, 50), 
-        AutoSize = true, 
-        Enabled = true, 
+        Location = new Point(450, 75),
+        Width = 100,
+        ShowUpDown = true,
+    };
+
+    Label l_training = new Label(){
+        Text = "運動時間(分)",
+        TabIndex = 99,
+        Location = new Point(550, 50),
+        AutoSize = true,
     };
 
     TextBox training = new TextBox(){
-        Text = "運動時間(分)",
+        Text = "",
         TabIndex = 6, 
-        Location = new Point(550, 50), 
+        Location = new Point(550, 75), 
         AutoSize = true, 
         Enabled = true, 
     };
@@ -263,7 +313,7 @@ class Input : Form{
     CheckBox sleepy = new CheckBox(){
         Text = "眠気", 
         TabIndex = 7, 
-        Location = new Point(150, 75), 
+        Location = new Point(150, 125), 
         AutoSize = true, 
         Checked = false, 
         Enabled = true, 
@@ -272,24 +322,30 @@ class Input : Form{
     CheckBox panic = new CheckBox(){
         Text = "不安感・焦燥感", 
         TabIndex = 8, 
-        Location = new Point(250, 75), 
+        Location = new Point(250, 125), 
         AutoSize = true, 
         Checked = false, 
         Enabled = true, 
     };
 
-    TextBox feel = new TextBox(){
-        Text = "気分", 
+    Label l_feels = new Label(){
+        Text = "気分",
+        TabIndex = 99,
+        Location = new Point(350, 100),
+        AutoSize = true,
+    };
+
+    ComboBox feel = new ComboBox(){
+        Items = { "悪い", "普通", "良い" },
         TabIndex = 9, 
-        Location = new Point(350, 75), 
+        Location = new Point(350, 125), 
         AutoSize = true, 
-        Enabled = true, 
     };
 
     Button submit = new Button(){
         Text = "submit", 
         TabIndex = 9, 
-        Location = new Point(250, 100), 
+        Location = new Point(250, 150), 
         AutoSize = true, 
         Enabled = true, 
     };
@@ -297,38 +353,38 @@ class Input : Form{
     Button exit = new Button(){
         Text = "exit", 
         TabIndex = 10, 
-        Location = new Point(350, 100), 
+        Location = new Point(350, 150), 
         AutoSize = true, 
         Enabled = true, 
     };
 
     public Input(){
         this.Width = 700;
-        this.Height = 200;
+        this.Height = 250;
         this.Controls.Add(label);
         //就寝時刻フォーム
+        this.Controls.Add(l_slept_start);
         this.Controls.Add(slept_start);
-        slept_start.Click += new EventHandler(clear);
 
         //起床時刻フォーム
+        this.Controls.Add(l_slept_end);
         this.Controls.Add(slept_end);
-        slept_end.Click += new EventHandler(clear);
 
         //薬1服用時刻
+        this.Controls.Add(l_pill1);
         this.Controls.Add(pill1);
-        pill1.Click += new EventHandler(clear);
 
         //薬2服用時刻
+        this.Controls.Add(l_pill2);
         this.Controls.Add(pill2);
-        pill2.Click += new EventHandler(clear);
 
         //薬3服用時刻
+        this.Controls.Add(l_pill3);
         this.Controls.Add(pill3);
-        pill3.Click += new EventHandler(clear);
 
         //運動時間
+        this.Controls.Add(l_training);
         this.Controls.Add(training);
-        training.Click += new EventHandler(clear);
 
         //眠気チェックボックス
         this.Controls.Add(sleepy);
@@ -337,8 +393,8 @@ class Input : Form{
         this.Controls.Add(panic);
 
         //気分入力フォーム
+        this.Controls.Add(l_feels);
         this.Controls.Add(feel);
-        feel.Click += new EventHandler(clear);
 
         //入力確定ボタン
         this.Controls.Add(submit);
@@ -378,21 +434,21 @@ class Input : Form{
         }
         if(config[0] == "TRUE"){
             pill1.Enabled = true;
-            pill1.Text = config[1];
+            l_pill1.Text = config[1];
         }
         else{
             pill1.Enabled = false;
         }
         if(config[2] == "TRUE"){
             pill2.Enabled = true;
-            pill2.Text = config[3];
+            l_pill2.Text = config[3];
         }
         else{
             pill2.Enabled = false;
         }
         if(config[4] == "TRUE"){
             pill3.Enabled = true;
-            pill3.Text = config[5];
+            l_pill3.Text = config[5];
         }
         else{
             pill3.Enabled = false;
@@ -407,32 +463,27 @@ class Input : Form{
 
     private void F_submit(object sender, EventArgs e){
         //睡眠時間の算出
-        string[] start = slept_start.Text.Split(':');
-        string[] end = slept_end.Text.Split(':');
-        int total = 0;
-        int start_h = int.Parse(start[0]);
-        int end_h = int.Parse(end[0]);
-        int start_m = int.Parse(start[1]);
-        int end_m = int.Parse(end[1]);
-        while(start_h != end_h){
-            start_h = (start_h + 1) % 24;
-            total += 60;
-        }
-        total += end_m - start_m;
+        string total = (slept_end.Value - slept_start.Value).ToString();
         //CSVに書き出し
         List<string> data = new List<string>();
         DateTime dt = DateTime.Now;
         data.Add(slept_start.Text);
         data.Add(slept_end.Text);
-        data.Add(Convert.ToString(total));
+        data.Add(total);
         if(pill1.Enabled){
             data.Add(pill1.Text);
+        }else{
+            data.Add("");
         }
         if(pill2.Enabled){
             data.Add(pill2.Text);
+        }else{
+            data.Add("");
         }
         if(pill3.Enabled){
             data.Add(pill3.Text);
+        }else{
+            data.Add("");
         }
         data.Add(training.Text);
         if(sleepy.Checked == true){
@@ -456,7 +507,7 @@ class Input : Form{
         }
         string output = "";
         string yymmdd = dt.Year + "/" + dt.Month + "/" + dt.Day;
-        output = yymmdd + "," + dt.Hour + ":" + dt.Minute + ",";
+        output = yymmdd + "," + dt.ToShortTimeString() + ",";
         bool sw = false;
         foreach(var val in lines){
             if(val.IndexOf(yymmdd) != -1){
@@ -803,7 +854,7 @@ class Edit : Form{
     ComboBox d_list = new ComboBox()
     {
         TabIndex = 1,
-        Location = new Point(50, 50),
+        Location = new Point(50, 60),
         AutoSize = true,
     };
 
@@ -811,7 +862,7 @@ class Edit : Form{
     {
         Text = "edit",
         TabIndex = 2,
-        Location = new Point(150, 100),
+        Location = new Point(50, 85),
         AutoSize = true,
     };
 
@@ -825,69 +876,33 @@ class Edit : Form{
 
     DateTimePicker slept_start = new DateTimePicker()
     {
-        Location = new Point(50, 175),
-        AutoSize = true,
-        MinDate = new DateTime(2000, 1, 1),
-        MaxDate = DateTime.Today,
+        Format = DateTimePickerFormat.Custom,
+        ShowUpDown = true,
         CustomFormat = "HH:mm",
+        Width = 100,
+        Location = new Point(50, 175),
         Visible = false,
     };
 
     Label l_slept_end = new Label()
     {
         Text = "起床",
-        Location = new Point(100, 150),
+        Location = new Point(150, 150),
         AutoSize = true,
         Visible = false,
     };
 
     DateTimePicker slept_end = new DateTimePicker()
     {
-        Location = new Point(100, 175),
-        AutoSize = true,
-        MinDate = new DateTime(2000, 1, 1),
-        MaxDate = DateTime.Today,
+        Format = DateTimePickerFormat.Custom,
+        ShowUpDown = true,
         CustomFormat = "HH:mm",
+        Width = 100,
+        Location = new Point(150, 175),
         Visible = false,
     };
 
     Label l_pill1 = new Label()
-    {
-        Text = "",
-        Location = new Point(150, 150),
-        AutoSize = true,
-        Visible = false,
-    };
-
-    DateTimePicker pill1 = new DateTimePicker()
-    {
-        Location = new Point(150, 175),
-        AutoSize = true,
-        MinDate = new DateTime(2000, 1, 1),
-        MaxDate = DateTime.Now,
-        CustomFormat = "HH:mm",
-        Visible = false,
-    };
-
-    Label l_pill2 = new Label()
-    {
-        Text = "",
-        Location = new Point(200, 150),
-        AutoSize = true,
-        Visible = false,
-    };
-
-    DateTimePicker pill2 = new DateTimePicker()
-    {
-        Location = new Point(200, 175),
-        AutoSize = true,
-        MinDate = new DateTime(2000, 1, 1),
-        MaxDate = DateTime.Now,
-        CustomFormat = "HH:mm",
-        Visible = false,
-    };
-
-    Label l_pill3 = new Label()
     {
         Text = "",
         Location = new Point(250, 150),
@@ -895,35 +910,71 @@ class Edit : Form{
         Visible = false,
     };
 
+    DateTimePicker pill1 = new DateTimePicker()
+    {
+        Format = DateTimePickerFormat.Custom,
+        ShowUpDown = true,
+        CustomFormat = "HH:mm",
+        Width = 100,
+        Location = new Point(250, 175),
+        Visible = false,
+    };
+
+    Label l_pill2 = new Label()
+    {
+        Text = "",
+        Location = new Point(350, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
+    DateTimePicker pill2 = new DateTimePicker()
+    {
+        Format = DateTimePickerFormat.Custom,
+        ShowUpDown = true,
+        CustomFormat = "HH:mm",
+        Width = 100,
+        Location = new Point(350, 175),
+        Visible = false,
+    };
+
+    Label l_pill3 = new Label()
+    {
+        Text = "",
+        Location = new Point(450, 150),
+        AutoSize = true,
+        Visible = false,
+    };
+
     DateTimePicker pill3 = new DateTimePicker()
     {
-        Location = new Point(250, 175),
-        AutoSize = true,
-        MinDate = new DateTime(2000, 1, 1),
-        MaxDate = DateTime.Now,
+        Format = DateTimePickerFormat.Custom,
+        ShowUpDown = true,
         CustomFormat = "HH:mm",
+        Width = 100,
+        Location = new Point(450, 175),
         Visible = false,
     };
 
     Label l_training = new Label()
     {
         Text = "運動時間",
-        Location = new Point(300, 150),
+        Location = new Point(550, 150),
         AutoSize = true,
         Visible = false,
     };
 
     ComboBox training = new ComboBox()
     {
-        Location = new Point(300, 175),
-        AutoSize = true,
+        Location = new Point(550, 175),
+        Width = 100,
         Visible = false,
     };
 
     CheckBox sleepy = new CheckBox()
     {
         Text = "眠気",
-        Location = new Point(360, 165),
+        Location = new Point(50, 225),
         AutoSize = true,
         Visible = false,
     };
@@ -931,7 +982,7 @@ class Edit : Form{
     CheckBox panic = new CheckBox()
     {
         Text = "不安感・焦燥感",
-        Location = new Point(420, 165),
+        Location = new Point(150, 225),
         AutoSize = true,
         Visible = false,
     };
@@ -939,7 +990,7 @@ class Edit : Form{
     Label l_feels = new Label()
     {
         Text = "気分",
-        Location = new Point(500, 150),
+        Location = new Point(250, 200),
         AutoSize = true,
         Visible = false,
     };
@@ -947,8 +998,24 @@ class Edit : Form{
     ComboBox feels = new ComboBox()
     {
         Items = { "悪い", "普通", "良い" },
-        Location = new Point(500, 175),
+        Location = new Point(250, 225),
+        Width = 100,
+        Visible = false,
+    };
+
+    Label l_tstump = new Label(){
+        Text = "タイムスタンプ",
+        Location = new Point(350, 200),
         AutoSize = true,
+        Visible = false,
+    };
+
+    DateTimePicker tstump = new DateTimePicker(){
+        Format = DateTimePickerFormat.Custom,
+        ShowUpDown = true,
+        CustomFormat = "HH:mm",
+        Width = 100,
+        Location = new Point(350, 225),
         Visible = false,
     };
 
@@ -956,6 +1023,7 @@ class Edit : Form{
     {
         Text = "submit",
         TabIndex = 3,
+        Location = new Point(325, 300),
         Visible = false,
         Enabled = false
     };
@@ -964,14 +1032,14 @@ class Edit : Form{
     {
         Text = "exit",
         TabIndex = 4,
-        Location = new Point(150, 250),
+        Location = new Point(325, 350),
         AutoSize = true,
     };
 
     public Edit()
     {
         this.Width = 700;
-        this.Height = 300;
+        this.Height = 400;
         this.Controls.Add(label);
         this.Controls.Add(d_list);
         this.Controls.Add(edit);
@@ -987,6 +1055,12 @@ class Edit : Form{
         this.Controls.Add(pill3);
         this.Controls.Add(l_training);
         this.Controls.Add(training);
+        this.Controls.Add(sleepy);
+        this.Controls.Add(panic);
+        this.Controls.Add(l_feels);
+        this.Controls.Add(feels);
+        this.Controls.Add(l_tstump);
+        this.Controls.Add(tstump);
         this.Controls.Add(submit);
         this.Controls.Add(exit);
 
@@ -1034,6 +1108,7 @@ class Edit : Form{
         l_pill3.Visible = true;
         l_training.Visible = true;
         l_feels.Visible = true;
+        l_tstump.Visible = true;
         slept_start.Visible = true;
         slept_end.Visible = true;
         pill1.Visible = true;
@@ -1043,6 +1118,7 @@ class Edit : Form{
         sleepy.Visible = true;
         panic.Visible = true;
         feels.Visible = true;
+        tstump.Visible = true;
         submit.Visible = true;
 
         sleepy.Enabled = true;
@@ -1051,11 +1127,27 @@ class Edit : Form{
         submit.Enabled = true;
 
         string[] target_data = lines[num].Split(',');
+        tstump.Value = DateTime.Parse(target_data[1]);
         slept_start.Value = DateTime.Parse(target_data[3]);
         slept_end.Value = DateTime.Parse(target_data[4]);
-        pill1.Value = DateTime.Parse(target_data[6]);
-        pill2.Value = DateTime.Parse(target_data[7]);
-        pill3.Value = DateTime.Parse(target_data[8]);
+        if(target_data[6] != ""){
+            pill1.Value = DateTime.Parse(target_data[6]);
+        }else{
+            pill1.Value = DateTime.Now;
+            pill1.Enabled = false;
+        }
+        if(target_data[7] != ""){
+            pill2.Value = DateTime.Parse(target_data[7]);
+        }else{
+            pill2.Value = DateTime.Now;
+            pill2.Enabled = false;
+        }
+        if(target_data[8] != ""){
+            pill3.Value = DateTime.Parse(target_data[8]);
+        }else{
+            pill3.Value = DateTime.Now;
+            pill3.Enabled = false;
+        }
         training.ValueMember = target_data[9];
         if (target_data[10] == "1")
         {
@@ -1094,13 +1186,26 @@ class Edit : Form{
             if(num == seq)
             {
                 string[] data = val.Split(',');
-                data[3] = slept_start.Value.ToString();
-                data[4] = slept_end.Value.ToString();
+                data[1] = tstump.Text;
+                data[3] = slept_start.Text;
+                data[4] = slept_end.Text;
                 data[5] = (slept_end.Value - slept_start.Value).ToString();
-                data[6] = pill1.Value.ToString();
-                data[7] = pill2.Value.ToString();
-                data[8] = pill3.Value.ToString();
-                data[9] = training.ToString();
+                if(pill1.Enabled){
+                    data[6] = pill1.Text;
+                }else{
+                    data[6] = "";
+                }
+                if(pill2.Enabled){
+                    data[7] = pill2.Text;
+                }else{
+                    data[7] = "";
+                }
+                if(pill3.Enabled){
+                    data[8] = pill3.Text;
+                }else{
+                    data[8] = "";
+                }
+                data[9] = training.Text;
                 if(sleepy.Checked)
                 {
                     data[10] = "1";
@@ -1117,7 +1222,7 @@ class Edit : Form{
                 {
                     data[11] = "0";
                 }
-                    data[12] = feels.ToString();
+                    data[12] = feels.Text;
                 foreach(var val2 in data)
                 {
                     output = output + val2.ToString() + ",";
@@ -1129,9 +1234,10 @@ class Edit : Form{
             {
                 output = output + val + "\n";
             }
+            seq++;
         }
         file.Close();
-        StreamWriter o_file = new StreamWriter(@"自己管理シート.csv", true, Encoding.GetEncoding("utf-8"));
+        StreamWriter o_file = new StreamWriter(@"自己管理シート.csv", false, Encoding.GetEncoding("utf-8"));
         o_file.Write(output);
         o_file.Close();
         MessageBox.Show("変更が完了しました。", "result", MessageBoxButtons.OK);
